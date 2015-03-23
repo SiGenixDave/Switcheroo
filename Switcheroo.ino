@@ -95,7 +95,7 @@ void ServiceEdgeDetectInterrupt ()
 {
 	// Reset 500 usecs timer service so that next 500 usecs ISR occurs 500 usecs after
 	// edge is detected
-	// Timer2Reset ();
+	Timer2Reset ();
 
 
 	//TODO TOMMY service any addition edge detect needs
