@@ -13,7 +13,7 @@ void setup() {
 
 	pinMode (EDGE_DETECT_PIN, INPUT);
 
-	SetupCarrierFrequency (1.0E6, 0.5);
+	SetupCarrierFrequency (1.0E6, 0.50);
 	SetupInterruptTrigger (CHANGE);
 	SetupTimer2 ();
 
@@ -24,7 +24,7 @@ void loop()
 {
 	// TEST ONLY, jumper TEST_60_OUT_PIN arduino pin to pin 2 of the arduino
 	// to simulate 60 Hz edge signal
-	delay (9);
+	delay (7);
 	digitalWrite (TEST_60_OUT_PIN, !digitalRead (TEST_60_OUT_PIN));
 	//BlinkLed();
 	//Serial.println("hello");
@@ -42,8 +42,8 @@ ISR (TIMER2_OVF_vect) {
 
 void Timer2Reset ()
 {
-	TCNT2 = 193;			//Reset Up Timer to base count
-	TIFR2 = 0x00;			//Timer2 INT Flag Reg: Clear Timer Overflow Flag
+	TCNT2 = (255 - 250) + 2;	//Reset Up Timer to base count (2 usecs * 250 = 500 usecs)
+	TIFR2 = 0x00;				//Timer2 INT Flag Reg: Clear Timer Overflow Flag
 }
 
 
@@ -56,7 +56,7 @@ void SetupTimer2 ()
   
 	TIMSK2 = 0x01;			//Timer2 INT Reg: Timer2 Overflow Interrupt Enable
 	TCCR2A = 0x00;			//Timer2 Control Reg A: Normal port operation, Wave Gen Mode normal
-	TCCR2B = 0x05;			//Timer2 Control Reg B: Timer PreScaler set to 128
+	TCCR2B = 0x03;			//Timer2 Control Reg B: Timer PreScaler set to 32 (2 usecs / counter tick)
 }
 
 
@@ -74,7 +74,7 @@ void SetupCarrierFrequency (double Hz, double dutyCycle)
 	int dutyCycleCnt = (int)((freqCnt + 1) * dutyCycle) - 1;
 
 	pinMode (timer1OutputB, OUTPUT); 
-	TIMSK1 = 0;  // no interrupts
+	TIMSK1 = 0;				// no interrupts
 	Timer1::setMode (15, Timer1::PRESCALE_1, Timer1::CLEAR_B_ON_COMPARE);
 	
 	OCR1A = freqCnt;		// pulse period
@@ -97,11 +97,7 @@ void ServiceEdgeDetectInterrupt ()
 	// edge is detected
 	Timer2Reset ();
 
-
 	//TODO TOMMY service any addition edge detect needs
-
-
-
 }
 
 void BlinkLed ()
