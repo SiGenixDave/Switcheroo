@@ -3,13 +3,11 @@
 const byte EDGE_DETECT_PIN = 2;
 
 const byte LED_PIN = 13;
-const byte TEST_60_OUT_PIN = 8;
 
 void setup() {
 	
 	Serial.begin (19200);
 	pinMode (LED_PIN, OUTPUT); 
-	pinMode (TEST_60_OUT_PIN, OUTPUT);
 
 	pinMode (EDGE_DETECT_PIN, INPUT);
 
@@ -22,12 +20,8 @@ void setup() {
 
 void loop()
 {
-	// TEST ONLY, jumper TEST_60_OUT_PIN arduino pin to pin 2 of the arduino
-	// to simulate 60 Hz edge signal
-	delay (7);
-	digitalWrite (TEST_60_OUT_PIN, !digitalRead (TEST_60_OUT_PIN));
-	//BlinkLed();
-	//Serial.println("hello");
+	delay (500);
+	BlinkLed();
 }
 
 // Timer2 Overflow Interrupt Vector, called every 500 microseconds
@@ -35,9 +29,8 @@ ISR (TIMER2_OVF_vect) {
 
 	Timer2Reset ();
 
-	// For test only
-	BlinkLed ();
-	BlinkLed ();
+	// TOMMY: Add 500 usecs processing 
+
 };  
 
 void Timer2Reset ()
